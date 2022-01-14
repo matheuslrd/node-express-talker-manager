@@ -4,6 +4,9 @@ const fileSystem = require('fs');
 
 const talker = require('./talker.json');
 
+const loginMiddleware = require('./middleware/loginMiddleware');
+const handleErrorLogin = require('./middleware/handleErrorLogin');
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -36,6 +39,8 @@ app.get('/talker/:id', (req, res) => {
 
   res.status(200).send(speakerUser);
 });
+
+app.post('/login', handleErrorLogin, loginMiddleware);
 
 app.listen(PORT, () => {
   console.log('Online');
