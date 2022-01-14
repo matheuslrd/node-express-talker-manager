@@ -6,6 +6,8 @@ const talker = require('./talker.json');
 
 const loginMiddleware = require('./middleware/loginMiddleware');
 const handleErrorLogin = require('./middleware/handleErrorLogin');
+const handleErrorTalker = require('./middleware/handleErrorTalker');
+const talkerMiddleware = require('./middleware/talkerMiddleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -41,6 +43,8 @@ app.get('/talker/:id', (req, res) => {
 });
 
 app.post('/login', handleErrorLogin, loginMiddleware);
+
+app.post('/talker', handleErrorTalker, talkerMiddleware);
 
 app.listen(PORT, () => {
   console.log('Online');
