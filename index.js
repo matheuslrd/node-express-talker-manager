@@ -8,8 +8,17 @@ const talker = require('./talker.json');
 const loginMiddleware = require('./middleware/loginMiddleware');
 const handleErrorLogin = require('./middleware/handleErrorLogin');
 
-const { handleErrorTalker, validateToken } = require('./middleware/handleErrorTalker');
 const talkerMiddleware = require('./middleware/talkerMiddleware');
+
+const putTalkerIdMiddleware = require('./middleware/putTalkerIdMiddleware');
+
+const {
+  validateName,
+  validateTalk,
+  validateAge,
+  validateToken,
+  validateTalkSecundary,
+} = require('./middleware/handleValidates');
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,6 +41,14 @@ app.get('/talker', rescue((_req, res) => {
   res.status(200).send(JSON.parse(speakers));
 }));
 
+app.post('/talker',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkSecundary,
+  validateTalk,
+  rescue(talkerMiddleware));
+
 app.get('/talker/:id', rescue((req, res) => {
   const { id } = req.params;
 
@@ -44,9 +61,9 @@ app.get('/talker/:id', rescue((req, res) => {
   res.status(200).send(speakerUser);
 }));
 
-app.post('/login', handleErrorLogin, rescue(loginMiddleware));
+app.put('/talker/:id', validateToken, rescue(putTalkerIdMiddleware));
 
-app.post('/talker', validateToken, handleErrorTalker, rescue(talkerMiddleware));
+app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 
 app.listen(PORT, () => {
   console.log('Online');
