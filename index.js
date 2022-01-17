@@ -61,7 +61,13 @@ app.get('/talker/:id', rescue((req, res) => {
   res.status(200).send(speakerUser);
 }));
 
-app.put('/talker/:id', validateToken, rescue(putTalkerIdMiddleware));
+app.put('/talker/:id', 
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkSecundary,
+  validateTalk, 
+  rescue(putTalkerIdMiddleware));
 
 app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 

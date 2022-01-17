@@ -71,7 +71,7 @@ const validateTalkSecundary = (req, res, next) => {
 
   const validateLenght = (talks) => (talks.watchedAt.length === 0 || talks.rate.length === 0);
   
-  if (!talk || !talk.rate || !talk.watchedAt || validateLenght(talk)) {
+  if (!talk || talk.rate === undefined || !talk.watchedAt || validateLenght(talk)) {
     return res.status(400).json(
       { message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios' },
     );
