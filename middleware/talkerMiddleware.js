@@ -1,17 +1,14 @@
-const validateToken = (token, res) => {
-  if (!token) {
-    return res.status(401).json({ message: 'Token não encontrado' });
-  }
+const fileSystem = require('fs');
 
-  if (token.length !== 16) {
-    return res.status(401).json({ message: 'Token inválido' });
-  }
-};
-
-module.exports = (req, res, _next) => {
-  const { authorization } = req.headers;
+module.exports = (req, res) => {
+  const { body: { name, age, talk } } = req;
   
-  validateToken(authorization, res);
+  const talkers = JSON.parse(fileSystem.readFileSync('./talker.json', 'utf-8'));
+  const id = talkers.length + 1;
 
-  res.status(200).send('Talker Middleware');
+  const newArchive = { id, name, age, talk };
+
+  fileSystem.writeFileSync('./talker.json', JSON.stringify([newArchive]));
+
+  return res.status(201).send(newArchive);
 };

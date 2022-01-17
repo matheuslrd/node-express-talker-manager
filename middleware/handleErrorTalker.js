@@ -42,7 +42,7 @@ const validateTalk = ({ watchedAt, rate }, response) => {
 
 const validateLenght = (talk) => (talk.watchedAt.length === 0 || talk.rate.length === 0);
 
-module.exports = (req, res, next) => {
+const handleErrorTalker = (req, res, next) => {
   const { name, age, talk } = req.body;
 
   validateName(name, res);
@@ -58,4 +58,23 @@ module.exports = (req, res, next) => {
   validateTalk(talk, res);
 
   next();
+};
+
+const validateToken = (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return res.status(401).json({ message: 'Token não encontrado' });
+  }
+
+  if (authorization.length !== 16) {
+    return res.status(401).json({ message: 'Token inválido' });
+  }
+
+  next();
+};
+
+module.exports = {
+  handleErrorTalker,
+  validateToken,
 };
