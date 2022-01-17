@@ -3,10 +3,9 @@ const fileSystem = require('fs');
 const createNewListTalkers = (id, body) => {
   const talkers = JSON.parse(fileSystem.readFileSync('./talker.json', 'utf-8'));
 
-  const talkerPeople = talkers.find((talker) => talker.id === Number(id));
   const talkersWithoutPeople = talkers.filter((talker) => talker.id !== Number(id));
 
-  const talkersUpdated = [...talkersWithoutPeople, { id: Number(id), ...talkerPeople, ...body }];
+  const talkersUpdated = [...talkersWithoutPeople, { id: Number(id), ...body }];
 
   return talkersUpdated;
 };
@@ -23,5 +22,7 @@ module.exports = (req, res) => {
     console.log(`Erro ao escrever o arquivo: ${error.message}`);
   }
 
-  res.status(200).send(newTalkersUpdated);
+  const editedTalker = { id: Number(id), ...body };
+
+  res.status(200).json(editedTalker);
 };
