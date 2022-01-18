@@ -1,9 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const rescue = require('express-rescue');
-const fileSystem = require('fs');
 
-const talker = require('./talker.json');
+const showTalker = require('./middleware/showTalker');
 
 const loginMiddleware = require('./middleware/loginMiddleware');
 const handleErrorLogin = require('./middleware/handleErrorLogin');
@@ -11,6 +10,8 @@ const handleErrorLogin = require('./middleware/handleErrorLogin');
 const talkerMiddleware = require('./middleware/talkerMiddleware');
 
 const putTalkerIdMiddleware = require('./middleware/putTalkerIdMiddleware');
+
+const getTalkerById = require('./middleware/getTalkerById');
 
 const {
   validateName,
@@ -31,43 +32,27 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.get('/talker', rescue((_req, res) => {
-  const speakers = fileSystem.readFileSync('./talker.json', 'utf-8');
+app.route('/talker')
+  .get(rescue(showTalker))
+  .post(
+    validateToken,
+    validateName,
+    validateAge,
+    validateTalkSecundary,
+    validateTalk,
+    rescue(talkerMiddleware),
+  );
 
-  if (!speakers || speakers.length === 0) {
-    return res.status(200).send([]);
-  }
-
-  res.status(200).send(JSON.parse(speakers));
-}));
-
-app.post('/talker',
-  validateToken,
-  validateName,
-  validateAge,
-  validateTalkSecundary,
-  validateTalk,
-  rescue(talkerMiddleware));
-
-app.get('/talker/:id', rescue((req, res) => {
-  const { id } = req.params;
-
-  const speakerUser = talker.find((speaker) => speaker.id === Number(id));
-  
-  if (!speakerUser) {
-    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-  }
-
-  res.status(200).send(speakerUser);
-}));
-
-app.put('/talker/:id', 
-  validateToken,
-  validateName,
-  validateAge,
-  validateTalkSecundary,
-  validateTalk, 
-  rescue(putTalkerIdMiddleware));
+app.route('/talker/:id')
+  .get(rescue(getTalkerById))
+  .put(
+    validateToken,
+    validateName,
+    validateAge,
+    validateTalkSecundary,
+    validateTalk, 
+    rescue(putTalkerIdMiddleware),
+  );
 
 app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 
