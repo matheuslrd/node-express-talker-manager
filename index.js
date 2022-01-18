@@ -2,16 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const rescue = require('express-rescue');
 
-const showTalker = require('./middleware/showTalker');
-
-const loginMiddleware = require('./middleware/loginMiddleware');
 const handleErrorLogin = require('./middleware/handleErrorLogin');
-
+const loginMiddleware = require('./middleware/loginMiddleware');
+const showTalker = require('./middleware/showTalker');
 const talkerMiddleware = require('./middleware/talkerMiddleware');
-
-const putTalkerIdMiddleware = require('./middleware/putTalkerIdMiddleware');
-
 const getTalkerById = require('./middleware/getTalkerById');
+const putTalkerIdMiddleware = require('./middleware/putTalkerIdMiddleware');
+const deleteTalker = require('./middleware/deleteTalker');
 
 const {
   validateName,
@@ -31,6 +28,8 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
+
+app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 
 app.route('/talker')
   .get(rescue(showTalker))
@@ -52,9 +51,11 @@ app.route('/talker/:id')
     validateTalkSecundary,
     validateTalk, 
     rescue(putTalkerIdMiddleware),
+  )
+  .delete(
+    validateToken,
+    deleteTalker,
   );
-
-app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 
 app.listen(PORT, () => {
   console.log('Online');
