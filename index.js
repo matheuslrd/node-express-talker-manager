@@ -9,6 +9,7 @@ const talkerMiddleware = require('./middleware/talkerMiddleware');
 const getTalkerById = require('./middleware/getTalkerById');
 const putTalkerIdMiddleware = require('./middleware/putTalkerIdMiddleware');
 const deleteTalker = require('./middleware/deleteTalker');
+const searchTalkers = require('./middleware/searchTalkers');
 
 const {
   validateName,
@@ -29,20 +30,10 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.post('/login', handleErrorLogin, rescue(loginMiddleware));
+app.route('/talker/search')
+  .get(validateToken, searchTalkers);
 
-app.route('/talker')
-  .get(rescue(showTalker))
-  .post(
-    validateToken,
-    validateName,
-    validateAge,
-    validateTalkSecundary,
-    validateTalk,
-    rescue(talkerMiddleware),
-  );
-
-app.route('/talker/:id')
+  app.route('/talker/:id')
   .get(rescue(getTalkerById))
   .put(
     validateToken,
@@ -56,6 +47,19 @@ app.route('/talker/:id')
     validateToken,
     deleteTalker,
   );
+
+app.route('/talker')
+  .get(rescue(showTalker))
+  .post(
+    validateToken,
+    validateName,
+    validateAge,
+    validateTalkSecundary,
+    validateTalk,
+    rescue(talkerMiddleware),
+  );
+
+  app.post('/login', handleErrorLogin, rescue(loginMiddleware));
 
 app.listen(PORT, () => {
   console.log('Online');

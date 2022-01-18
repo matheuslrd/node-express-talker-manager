@@ -8,7 +8,7 @@ module.exports = (req, res) => {
 
   const newArchive = { id, name, age, talk };
 
-  fileSystem.writeFileSync('./talker.json', JSON.stringify([newArchive]));
+  fileSystem.writeFileSync('./talker.json', JSON.stringify([...talkers, newArchive]));
 
   return res.status(201).send(newArchive);
 };
