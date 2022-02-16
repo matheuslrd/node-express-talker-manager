@@ -1,4 +1,4 @@
-# Boas vindas ao repositório do projeto Spotify Clone!
+# Boas vindas ao repositório do projeto Talker Manager!
 
 Este projeto foi desenvolvido á fins de estudo para a Trybe, para testar
 conhecimentos em Node e na estrutura de aplicativo Node para Web utilizando express!
